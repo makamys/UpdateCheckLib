@@ -23,14 +23,14 @@ import static makamys.updatechecklib.UpdateCheckLib.LOGGER;
 class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
     	
 	String name;
-	String currentVersion;
+	ComparableVersion currentVersion;
 	UpdateCategory category;
 	String updateJSONUrl;
 	String updateUrl;
 	
 	public UpdateCheckTask(String name, String currentVersion, UpdateCategory category, String updateJSONUrl, String updateUrl) {
 		this.name = name;
-		this.currentVersion = currentVersion;
+		this.currentVersion = new ComparableVersion(currentVersion);
 		this.category = category;
 		this.updateJSONUrl = updateJSONUrl;
 		this.updateUrl = updateUrl;
@@ -40,7 +40,7 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 	public UpdateCheckTask.Result get() {
         LOGGER.debug("Checking " + name + " for updates");
 
-        ComparableVersion current = new ComparableVersion(currentVersion);
+        ComparableVersion current = currentVersion;
         ComparableVersion solved = null;
         try {
         	solved = solveVersion();
@@ -88,6 +88,10 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 		
 		public Result(UpdateCheckTask task) {
 			this(task, null);
+		}
+		
+		public boolean foundUpdate() {
+			return newVersion != null && newVersion.compareTo(task.currentVersion) > 0;
 		}
 	}
 }

@@ -46,8 +46,12 @@ public class ResultHTMLRenderer {
 		
 	}
 	
+	private boolean hasAnythingToDisplay() {
+		return UpdateCheckLib.categories.values().stream().anyMatch(cat -> cat.results.stream().anyMatch(r -> (r.foundUpdate() || r.newVersion == null)));
+	}
+	
 	public boolean render(File outFile) {
-		if(UpdateCheckLib.categories.entrySet().isEmpty()) {
+		if(!hasAnythingToDisplay()) {
 			outFile.delete();
 		} else {
 			try (FileOutputStream out = new FileOutputStream(outFile)){

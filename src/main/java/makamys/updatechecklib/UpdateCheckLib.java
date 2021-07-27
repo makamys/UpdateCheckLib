@@ -133,7 +133,7 @@ public class UpdateCheckLib
 				
 				updateCount = 0;
 				for(UpdateCheckTask.Result result : results) {
-					if(result.newVersion != null) {
+					if(result.foundUpdate()) {
 						updateCount++;
 					}
 					result.task.category.results.add(result);
