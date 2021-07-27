@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -27,12 +25,9 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -42,7 +37,7 @@ public class UpdateCheckLib
     public static final String MODID = "UpdateCheckLib";
     public static final String VERSION = "0.0";
     
-    public static final Logger LOGGER = LogManager.getLogger("dmod");
+    public static final Logger LOGGER = LogManager.getLogger("updatechecklib");
 
     private static BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     private static ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, workQueue);
@@ -100,6 +95,7 @@ public class UpdateCheckLib
     }
     
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void onGui(InitGuiEvent.Post event) {
     	if(event.gui instanceof GuiMainMenu) {
     		ConfigUCL.reload();
