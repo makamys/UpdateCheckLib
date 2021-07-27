@@ -2,19 +2,14 @@ package makamys.updatechecklib;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 import cpw.mods.fml.common.versioning.ComparableVersion;
 import makamys.updatechecklib.UpdateCheckLib.UpdateCategory;
@@ -27,17 +22,16 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 	ComparableVersion currentVersion;
 	UpdateCategory category;
 	String updateJSONUrl;
-	String updateUrl;
+	String homepage = "";
 	
 	public static final boolean TEST_MODE = Boolean.parseBoolean(System.getProperty("updateCheckLib.test", "false"));
 	private static final String MOCK_PREFIX = "mock://";
 	
-	public UpdateCheckTask(String name, String currentVersion, UpdateCategory category, String updateJSONUrl, String updateUrl) {
+	public UpdateCheckTask(String name, String currentVersion, UpdateCategory category, String updateJSONUrl) {
 		this.name = name;
 		this.currentVersion = new ComparableVersion(currentVersion);
 		this.category = category;
 		this.updateJSONUrl = updateJSONUrl;
-		this.updateUrl = updateUrl;
 	}
 	
 	@Override
@@ -49,7 +43,7 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
         try {
         	solved = solveVersion();
         } catch(Exception e) {
-        	LOGGER.log(!ConfigUCL.hideErrored ? Level.ERROR : Level.DEBUG, "Failed to retrieve update JSON for " + name + ": " + e.getMessage());
+        	LOGGER.log(getErrorLevel(), "Failed to retrieve update JSON for " + name + ": " + e.getMessage());
         }
         if (solved == null)
             return new UpdateCheckTask.Result(this);
@@ -58,6 +52,10 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 
         return new UpdateCheckTask.Result(this, solved);
     }
+	
+	private Level getErrorLevel() {
+		return !ConfigUCL.hideErrored ? Level.ERROR : Level.DEBUG;
+	}
 	
 	private ComparableVersion solveVersion() throws Exception {
 		if(category == null) return null;
@@ -70,15 +68,25 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 
         JsonObject jason = new JsonParser().parse(jasonString).getAsJsonObject();
         
-        JsonElement versions = jason.get(category.version);
-        if(versions != null) {
-            List<ComparableVersion> availableVersions = ((JsonObject)versions).entrySet().stream()
-                    .map(name -> new ComparableVersion(name.getKey())).collect(Collectors.toList());
-            ComparableVersion latest = Collections.max(availableVersions);
-
-            return latest;            	
+        JsonElement homepageElem = jason.get("homepage");
+        if(homepageElem instanceof JsonPrimitive) {
+        	homepage = homepageElem.getAsString();
+        } else {
+        	LOGGER.log(getErrorLevel(), "Failed to locate 'homepage' element in " + updateJSONUrl);
         }
-        LOGGER.error("Update json " + updateJSONUrl + " contains no " + category.version + " element.");
+        
+        String channel = ConfigUCL.promoChannel;
+        String promoKey = category.version + "-" + channel;
+        
+        JsonElement promos = jason.get("promos");
+        if(promos instanceof JsonObject) {
+        	JsonElement promoVersion = ((JsonObject)promos).get(promoKey);
+        	
+        	if(promoVersion != null) {
+        		return new ComparableVersion(promoVersion.getAsString());
+        	}
+        }
+        LOGGER.log(getErrorLevel(), "Failed to locate promos -> " + promoKey + " in " + updateJSONUrl);
         return null;
     }
 	

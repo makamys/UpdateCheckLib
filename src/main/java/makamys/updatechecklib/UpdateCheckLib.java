@@ -47,12 +47,14 @@ public class UpdateCheckLib
     private static final File updatesFile = new File(Launch.minecraftHome, "updates.html");
     
     static UpdateCategory MODS = new UpdateCategory(UpdateCheckAPI.MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
+    static UpdateCategory RESOURCE_PACKS = new UpdateCategory(UpdateCheckAPI.RESOURCE_PACKS_CATEGORY_ID, Loader.MC_VERSION, "Resource pack");
     static Map<String, UpdateCategory> categories = new HashMap<>();
     
     private static final int UPDATES_BUTTON_ID = 1615486202;
     
     static {
-    	categories.put("mods", MODS);
+    	categories.put(UpdateCheckAPI.MODS_CATEGORY_ID, MODS);
+    	categories.put(UpdateCheckAPI.RESOURCE_PACKS_CATEGORY_ID, RESOURCE_PACKS);
     }
     
     static boolean isEnabled() {
