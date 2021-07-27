@@ -98,7 +98,7 @@ public class UpdateCheckLib
     @SubscribeEvent
     public void onGui(InitGuiEvent.Post event) {
     	if(event.gui instanceof GuiMainMenu) {
-    		GuiButton button = new GuiButtonGeneric(UPDATES_BUTTON_ID, 317, 156, 20, 20, EnumChatFormatting.GREEN + "+4").setClickListener(new Runnable() {
+    		GuiButton button = new GuiButtonGeneric(UPDATES_BUTTON_ID, event.gui.width / 2 + 104, event.gui.height / 4 + 96, 20, 20, EnumChatFormatting.GREEN + "+4").setClickListener(new Runnable() {
 				@Override
 				public void run() {
 					String url = "https://www.example.com";
