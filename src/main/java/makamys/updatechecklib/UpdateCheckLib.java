@@ -45,11 +45,18 @@ public class UpdateCheckLib
     	categories.put("mods", MODS);
     }
     
+    private static boolean isEnabled() {
+    	ConfigUCL.loadIfNotAlready();
+    	return ConfigUCL.enabled;
+    }
+    
     public static void submitModTask(String modid, String updateJSONUrl, String updateURL) {
+    	if(!isEnabled()) return;
     	submitModTask(modid, null, updateJSONUrl, updateURL);
     }
     
     public static void submitModTask(String modid, String currentVersion, String updateJSONUrl, String updateURL) {
+    	if(!isEnabled()) return;
     	ModContainer mc = Loader.instance().getIndexedModList().get(modid);
     	if(mc == null) {
     		LOGGER.warn("Tried to register update check for non-existent modid: " + modid);
@@ -59,6 +66,7 @@ public class UpdateCheckLib
     }
     
     public static void submitTask(String name, String currentVersion, String categoryID, String updateJSONUrl, String updateURL) {
+    	if(!isEnabled()) return;
     	if(!categories.containsKey(categoryID)) {
     		LOGGER.warn("Tried to register a non-existent category for mod " + name + ": " + categoryID);
     	}
@@ -66,11 +74,13 @@ public class UpdateCheckLib
     }
     
     public static void registerCategory(String id, String version, String displayName) {
+    	if(!isEnabled()) return;
     	categories.put(id, new UpdateCategory(id, version, displayName));
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+    	if(!isEnabled()) return;
     	CompletableFuture.allOf(futures.toArray(new CompletableFuture[] {})).thenRun(new Runnable() {	
 			@Override
 			public void run() {
