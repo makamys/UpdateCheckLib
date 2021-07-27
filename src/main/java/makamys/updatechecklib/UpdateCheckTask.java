@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
         	LOGGER.error("Failed to retrieve update JSON for " + name + ": " + e.getMessage());
         }
         if (solved == null)
-            return null;
+            return new UpdateCheckTask.Result(this);
         
         LOGGER.debug("Update version found for " + name + ": " + solved + " (running " + current + ")");
 
@@ -83,6 +84,10 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 		public Result(UpdateCheckTask task, ComparableVersion newVersion) {
 			this.task = task;
 			this.newVersion = newVersion;
+		}
+		
+		public Result(UpdateCheckTask task) {
+			this(task, null);
 		}
 	}
 }

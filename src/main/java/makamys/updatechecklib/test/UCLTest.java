@@ -21,6 +21,10 @@ public class UCLTest {
     @cpw.mods.fml.common.Optional.Method(modid = "UpdateCheckLib")
     private void initUpdateCheck() {
     	UpdateCheckLib.submitModTask(MODID, "https://raw.githubusercontent.com/makamys/MAtmos/master/updatejson/update-matmos.json", "https://github.com/makamys/MAtmos/releases");
+    	
+    	// bad url test
+    	UpdateCheckLib.registerCategory("resourcePacks", "1.1.1", "Resource pack");
+    	UpdateCheckLib.submitTask("mod name", "0.1", "resourcePacks", "bad json url", "bad update url");
     }
     
 }
