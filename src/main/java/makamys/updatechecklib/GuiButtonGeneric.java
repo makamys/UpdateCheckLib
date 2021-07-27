@@ -1,18 +1,9 @@
 package makamys.updatechecklib;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumChatFormatting;
 
 /* Adapted from tconstruct's AbstractTab */
 public class GuiButtonGeneric extends GuiButton {
@@ -47,11 +38,15 @@ public class GuiButtonGeneric extends GuiButton {
     	boolean inWindow = this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
     	
     	if(inWindow) {
-    		Util.drawSimpleTooltip(mouseX, mouseY, (int)this.zLevel, Arrays.asList(
-	        		EnumChatFormatting.GREEN + "4" + EnumChatFormatting.RESET + " mod updates found.",
-	        		"Click to open list in browser.",
-	        		EnumChatFormatting.GRAY + "(Shift click to copy URL.)"));
+    		List<String> tooltipStrings = getTooltipStrings();
+    		if(tooltipStrings != null) {
+    			Util.drawSimpleTooltip(mouseX, mouseY, (int)this.zLevel, tooltipStrings);
+    		}
     	}
+    }
+    
+    public List<String> getTooltipStrings() {
+    	return null;
     }
     
     public GuiButtonGeneric setClickListener(Runnable clickListener) {

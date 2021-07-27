@@ -45,6 +45,7 @@ public class UpdateCheckLib
     private static BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     private static ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, workQueue);
     private static List<CompletableFuture<UpdateCheckTask.Result>> futures = new ArrayList<>();
+    private static int updateCount = 0;
     
     public static String MODS_CATEGORY_ID = "mods";
     static UpdateCategory MODS = new UpdateCategory(MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
@@ -98,18 +99,10 @@ public class UpdateCheckLib
     @SubscribeEvent
     public void onGui(InitGuiEvent.Post event) {
     	if(event.gui instanceof GuiMainMenu) {
-    		GuiButton button = new GuiButtonGeneric(UPDATES_BUTTON_ID, event.gui.width / 2 + 104, event.gui.height / 4 + 96, 20, 20, EnumChatFormatting.GREEN + "+4").setClickListener(new Runnable() {
-				@Override
-				public void run() {
-					String url = "https://www.example.com";
-					if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-						GuiScreen.setClipboardString(url);
-					} else {
-						Util.openURLInBrowser("https://www.example.com");
-					}
-				}
-			});
-    		event.buttonList.add(button);
+    		if(updateCount > 0) {
+	    		GuiButton button = new GuiButtonUpdates(UPDATES_BUTTON_ID, event.gui.width / 2 + 104, event.gui.height / 4 + 96, 20, 20, updateCount, "https://www.example.com");
+	    		event.buttonList.add(button);
+    		}
     	}
     }
     
@@ -129,7 +122,11 @@ public class UpdateCheckLib
 				})
 				.collect(Collectors.toList());
 				
+				updateCount = 0;
 				for(UpdateCheckTask.Result result : results) {
+					if(result.newVersion != null) {
+						updateCount++;
+					}
 					result.task.category.results.add(result);
 				}
 				
