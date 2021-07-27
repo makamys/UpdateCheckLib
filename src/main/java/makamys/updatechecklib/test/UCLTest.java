@@ -35,7 +35,11 @@ public class UCLTest {
     	
     	// bad json url, non-mod test
     	UpdateCheckLib.registerCategory("resourcePacks", "1.1.1", "Resource pack");
-    	UpdateCheckLib.submitTask("bad mod", "0.1", "resourcePacks", "bad json url", "bad update url");
+    	UpdateCheckLib.submitTask("bad res pack", "0.1", "resourcePacks", "bad json url", "bad update url");
+    	
+    	// category with no interesting elements
+    	UpdateCheckLib.registerCategory("thingy", "1.1.1", "Thingy");
+    	UpdateCheckLib.submitTask("up to date thingy", "1.1", "thingy", "mock://1.1", "https://example.com");
     }
     
 }
