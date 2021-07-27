@@ -1,6 +1,7 @@
 package makamys.updatechecklib;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,6 +48,7 @@ public class UpdateCheckLib
     private static ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, workQueue);
     private static List<CompletableFuture<UpdateCheckTask.Result>> futures = new ArrayList<>();
     private static int updateCount = 0;
+    private static final File updatesFile = new File(Launch.minecraftHome, "updates.html");
     
     public static String MODS_CATEGORY_ID = "mods";
     static UpdateCategory MODS = new UpdateCategory(MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
@@ -100,7 +103,14 @@ public class UpdateCheckLib
     public void onGui(InitGuiEvent.Post event) {
     	if(event.gui instanceof GuiMainMenu) {
     		if(updateCount > 0) {
-	    		GuiButton button = new GuiButtonUpdates(UPDATES_BUTTON_ID, event.gui.width / 2 + 104, event.gui.height / 4 + 96, 20, 20, updateCount, "https://www.example.com");
+    			String url = null;
+    			try {
+					url = updatesFile.toURI().toURL().toString();
+				} catch (MalformedURLException e) {
+					url = "";
+					e.printStackTrace();
+				}
+	    		GuiButton button = new GuiButtonUpdates(UPDATES_BUTTON_ID, event.gui.width / 2 + 104, event.gui.height / 4 + 96, 20, 20, updateCount, url);
 	    		event.buttonList.add(button);
     		}
     	}
@@ -139,7 +149,7 @@ public class UpdateCheckLib
     }
     
     private void onFinished() {
-    	new ResultHTMLRenderer().render(new File(Minecraft.getMinecraft().mcDataDir + "/updates.html"));
+    	new ResultHTMLRenderer().render(updatesFile);
     }
     
     @SideOnly(Side.CLIENT)
