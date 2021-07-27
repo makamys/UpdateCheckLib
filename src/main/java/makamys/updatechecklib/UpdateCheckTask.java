@@ -101,5 +101,9 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 		public boolean foundUpdate() {
 			return newVersion != null && newVersion.compareTo(task.currentVersion) > 0;
 		}
+		
+		public boolean isInteresting() {
+			return newVersion == null || newVersion.compareTo(task.currentVersion) > 0;
+		}
 	}
 }

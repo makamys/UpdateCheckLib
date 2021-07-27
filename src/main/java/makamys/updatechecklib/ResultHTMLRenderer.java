@@ -47,7 +47,7 @@ public class ResultHTMLRenderer {
 	}
 	
 	private boolean hasAnythingToDisplay() {
-		return UpdateCheckLib.categories.values().stream().anyMatch(cat -> cat.results.stream().anyMatch(r -> (r.foundUpdate() || r.newVersion == null)));
+		return UpdateCheckLib.categories.values().stream().anyMatch(cat -> cat.results.stream().anyMatch(r -> r.isInteresting()));
 	}
 	
 	public boolean render(File outFile) {
@@ -70,9 +70,11 @@ public class ResultHTMLRenderer {
 	private String generateTables() {
 		String tables = "";
 		for(UpdateCategory cat : UpdateCheckLib.categories.values().stream().sorted().collect(Collectors.toList())) {
+			List<UpdateCheckTask.Result> interestingResults = cat.results.stream().filter(r -> r.isInteresting()).collect(Collectors.toList());
+			
 			String tableTitle = cat.displayName;
 			String rows = "";
-			for(UpdateCheckTask.Result result : cat.results) {
+			for(UpdateCheckTask.Result result : interestingResults) {
 				String newVersionStr = result.newVersion != null ? result.newVersion.toString() : "<b>ERROR</b>";
 				rows += String.format(TABLE_ROW_TEMPLATE, result.task.name, result.task.currentVersion, newVersionStr, result.task.updateUrl, result.task.updateUrl);
 			}
