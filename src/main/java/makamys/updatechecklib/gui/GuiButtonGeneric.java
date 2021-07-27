@@ -1,7 +1,8 @@
-package makamys.updatechecklib;
+package makamys.updatechecklib.gui;
 
 import java.util.List;
 
+import makamys.updatechecklib.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 

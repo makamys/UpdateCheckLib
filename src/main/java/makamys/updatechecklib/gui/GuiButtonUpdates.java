@@ -1,10 +1,11 @@
-package makamys.updatechecklib;
+package makamys.updatechecklib.gui;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
+import makamys.updatechecklib.Util;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.EnumChatFormatting;
 
