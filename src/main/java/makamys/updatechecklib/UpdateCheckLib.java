@@ -102,7 +102,8 @@ public class UpdateCheckLib
     @SubscribeEvent
     public void onGui(InitGuiEvent.Post event) {
     	if(event.gui instanceof GuiMainMenu) {
-    		if(updateCount > 0) {
+    		ConfigUCL.reload();
+    		if(ConfigUCL.showUpdatesButton && updateCount > 0) {
     			String url = null;
     			try {
 					url = updatesFile.toURI().toURL().toString();
@@ -110,7 +111,9 @@ public class UpdateCheckLib
 					url = "";
 					e.printStackTrace();
 				}
-	    		GuiButton button = new GuiButtonUpdates(UPDATES_BUTTON_ID, event.gui.width / 2 + 104, event.gui.height / 4 + 96, 20, 20, updateCount, url);
+    			int buttonX = ConfigUCL.updatesButtonX + (ConfigUCL.updatesButtonAbsolutePos ? 0 : event.gui.width / 2);
+    			int buttonY = ConfigUCL.updatesButtonY + (ConfigUCL.updatesButtonAbsolutePos ? 0 : event.gui.height / 4);
+	    		GuiButton button = new GuiButtonUpdates(UPDATES_BUTTON_ID, buttonX, buttonY, 20, 20, updateCount, url);
 	    		event.buttonList.add(button);
     		}
     	}
