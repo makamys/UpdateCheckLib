@@ -1,5 +1,6 @@
 package makamys.updatechecklib;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +21,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 
 @Mod(modid = UpdateCheckLib.MODID, version = UpdateCheckLib.VERSION)
 public class UpdateCheckLib
@@ -69,9 +74,31 @@ public class UpdateCheckLib
     	CompletableFuture.allOf(futures.toArray(new CompletableFuture[] {})).thenRun(new Runnable() {	
 			@Override
 			public void run() {
-				System.out.println("finished update checks");
+				List<UpdateCheckTask.Result> results = futures.stream().map(f -> {
+					try {
+						return f.get();
+					} catch(Exception e) {
+						LOGGER.error("Failed to get retrieve update check result: " + e.getMessage());
+						return null;
+					}
+				})
+				.collect(Collectors.toList());
+			
+				onFinished(results);
+				if(event.getSide() == Side.CLIENT) {
+					onFinishedClient(results);
+				}
 			}
 		});
+    }
+    
+    private void onFinished(List<UpdateCheckTask.Result> results) {
+    	new ResultHTMLRenderer(results).render(new File(Minecraft.getMinecraft().mcDataDir + "/updates.html"));
+    }
+    
+    @SideOnly(Side.CLIENT)
+    private void onFinishedClient(List<UpdateCheckTask.Result> results) {
+    	
     }
     
     static class UpdateCategory {
