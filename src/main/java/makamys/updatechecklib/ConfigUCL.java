@@ -10,6 +10,7 @@ public class ConfigUCL {
 	private static boolean loaded;
 	
 	public static boolean enabled;
+	public static boolean hideErrored;
 	
 	public static boolean showUpdatesButton;
 	
@@ -30,6 +31,8 @@ public class ConfigUCL {
         config.load();
         
         enabled = config.getBoolean("enable", "_general", true, "Set this to false to disable this mod");
+        hideErrored = config.getBoolean("hideErrored", "_general", false, "If true, results that errored won't be shown");
+        
         showUpdatesButton = config.getBoolean("showUpdatesButton", "interface", true, "Show updates button in main menu when there are updates available");
         updatesButtonX = config.getInt("updatesButtonX", "interface", 104, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
         updatesButtonY = config.getInt("updatesButtonY", "interface", 96, Integer.MIN_VALUE, Integer.MAX_VALUE, "");

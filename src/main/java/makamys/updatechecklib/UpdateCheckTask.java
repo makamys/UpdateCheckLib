@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.Level;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -48,7 +49,7 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
         try {
         	solved = solveVersion();
         } catch(Exception e) {
-        	LOGGER.error("Failed to retrieve update JSON for " + name + ": " + e.getMessage());
+        	LOGGER.log(!ConfigUCL.hideErrored ? Level.ERROR : Level.DEBUG, "Failed to retrieve update JSON for " + name + ": " + e.getMessage());
         }
         if (solved == null)
             return new UpdateCheckTask.Result(this);
@@ -103,7 +104,7 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 		}
 		
 		public boolean isInteresting() {
-			return newVersion == null || newVersion.compareTo(task.currentVersion) > 0;
+			return (!ConfigUCL.hideErrored && newVersion == null) || foundUpdate();
 		}
 	}
 }
