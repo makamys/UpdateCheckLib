@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+	
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -41,13 +41,12 @@ public class UpdateCheckLib
     public static final Logger LOGGER = LogManager.getLogger("updatechecklib");
 
     private static BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
-    private static ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, workQueue);
-    private static List<CompletableFuture<UpdateCheckTask.Result>> futures = new ArrayList<>();
+    static ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, workQueue);
+    static List<CompletableFuture<UpdateCheckTask.Result>> futures = new ArrayList<>();
     private static int updateCount = 0;
     private static final File updatesFile = new File(Launch.minecraftHome, "updates.html");
     
-    public static String MODS_CATEGORY_ID = "mods";
-    static UpdateCategory MODS = new UpdateCategory(MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
+    static UpdateCategory MODS = new UpdateCategory(UpdateCheckAPI.MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
     static Map<String, UpdateCategory> categories = new HashMap<>();
     
     private static final int UPDATES_BUTTON_ID = 1615486202;
@@ -56,39 +55,10 @@ public class UpdateCheckLib
     	categories.put("mods", MODS);
     }
     
-    private static boolean isEnabled() {
+    static boolean isEnabled() {
     	ConfigUCL.loadIfNotAlready();
     	return ConfigUCL.enabled;
     }
-    
-    public static void submitModTask(String modid, String updateJSONUrl, String updateURL) {
-    	if(!isEnabled()) return;
-    	submitModTask(modid, null, updateJSONUrl, updateURL);
-    }
-    
-    public static void submitModTask(String modid, String currentVersion, String updateJSONUrl, String updateURL) {
-    	if(!isEnabled()) return;
-    	ModContainer mc = Loader.instance().getIndexedModList().get(modid);
-    	if(mc == null) {
-    		LOGGER.warn("Tried to register update check for non-existent modid: " + modid);
-    		return;
-    	}
-    	submitTask(mc.getName(), currentVersion != null ? currentVersion : mc.getVersion(), MODS_CATEGORY_ID, updateJSONUrl, updateURL);
-    }
-    
-    public static void submitTask(String name, String currentVersion, String categoryID, String updateJSONUrl, String updateURL) {
-    	if(!isEnabled()) return;
-    	if(!categories.containsKey(categoryID)) {
-    		LOGGER.warn("Tried to register a non-existent category for mod " + name + ": " + categoryID);
-    	}
-    	futures.add(CompletableFuture.supplyAsync(new UpdateCheckTask(name, currentVersion, categories.get(categoryID), updateJSONUrl, updateURL), executor));
-    }
-    
-    public static void registerCategory(String id, String version, String displayName) {
-    	if(!isEnabled()) return;
-    	categories.put(id, new UpdateCategory(id, version, displayName));
-    }
-    
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -171,7 +141,7 @@ public class UpdateCheckLib
 
 		@Override
 		public int compareTo(UpdateCategory o) {
-			return this.id.equals(UpdateCheckLib.MODS_CATEGORY_ID) ? -1 : displayName.compareTo(o.displayName);
+			return this.id.equals(UpdateCheckAPI.MODS_CATEGORY_ID) ? -1 : displayName.compareTo(o.displayName);
 		}
     }
 }
