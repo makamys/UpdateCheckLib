@@ -1,7 +1,6 @@
 package makamys.updatechecklib;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -29,6 +29,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -100,12 +101,11 @@ public class UpdateCheckLib
     		GuiButton button = new GuiButtonGeneric(UPDATES_BUTTON_ID, 317, 156, 20, 20, EnumChatFormatting.GREEN + "+4").setClickListener(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						Class oclass = Class.forName("java.awt.Desktop");
-						Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object) null, new Object[0]);
-						oclass.getMethod("browse", new Class[] { URI.class }).invoke(object, new Object[] { new URI("https://www.example.com") });
-					} catch (Throwable throwable) {
-						UpdateCheckLib.LOGGER.error("Couldn\'t open link", throwable);
+					String url = "https://www.example.com";
+					if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+						GuiScreen.setClipboardString(url);
+					} else {
+						Util.openURLInBrowser("https://www.example.com");
 					}
 				}
 			});
