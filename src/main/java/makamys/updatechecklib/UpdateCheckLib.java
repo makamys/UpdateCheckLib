@@ -21,9 +21,16 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 @Mod(modid = UpdateCheckLib.MODID, version = UpdateCheckLib.VERSION)
 public class UpdateCheckLib
@@ -40,6 +47,8 @@ public class UpdateCheckLib
     public static String MODS_CATEGORY_ID = "mods";
     static UpdateCategory MODS = new UpdateCategory(MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
     static Map<String, UpdateCategory> categories = new HashMap<>();
+    
+    private static final int UPDATES_BUTTON_ID = 1615486202;
     
     static {
     	categories.put("mods", MODS);
@@ -76,6 +85,20 @@ public class UpdateCheckLib
     public static void registerCategory(String id, String version, String displayName) {
     	if(!isEnabled()) return;
     	categories.put(id, new UpdateCategory(id, version, displayName));
+    }
+    
+    
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+    	MinecraftForge.EVENT_BUS.register(this);
+    }
+    
+    @SubscribeEvent
+    public void onGui(InitGuiEvent.Post event) {
+    	if(event.gui instanceof GuiMainMenu) {
+    		GuiButton button = new GuiButton(UPDATES_BUTTON_ID, 317, 156, 20, 20, EnumChatFormatting.GREEN + "+!");
+    		event.buttonList.add(button);
+    	}
     }
     
     @EventHandler
