@@ -1,6 +1,7 @@
 package makamys.updatechecklib;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +100,13 @@ public class UpdateCheckLib
     		GuiButton button = new GuiButtonGeneric(UPDATES_BUTTON_ID, 317, 156, 20, 20, EnumChatFormatting.GREEN + "+4").setClickListener(new Runnable() {
 				@Override
 				public void run() {
-					Minecraft.getMinecraft().displayGuiScreen(new GuiUpdateNotification(event.gui, "https://www.example.com", true));
+					try {
+						Class oclass = Class.forName("java.awt.Desktop");
+						Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object) null, new Object[0]);
+						oclass.getMethod("browse", new Class[] { URI.class }).invoke(object, new Object[] { new URI("https://www.example.com") });
+					} catch (Throwable throwable) {
+						UpdateCheckLib.LOGGER.error("Couldn\'t open link", throwable);
+					}
 				}
 			});
     		event.buttonList.add(button);
