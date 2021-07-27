@@ -45,24 +45,24 @@ public class UpdateCheckLib
     	categories.put("mods", MODS);
     }
     
-    public static void submitModTask(String modid, String updateJSONUrl) {
-    	submitModTask(modid, null, updateJSONUrl);
+    public static void submitModTask(String modid, String updateJSONUrl, String updateURL) {
+    	submitModTask(modid, null, updateJSONUrl, updateURL);
     }
     
-    public static void submitModTask(String modid, String currentVersion, String updateJSONUrl) {
+    public static void submitModTask(String modid, String currentVersion, String updateJSONUrl, String updateURL) {
     	ModContainer mc = Loader.instance().getIndexedModList().get(modid);
     	if(mc == null) {
     		LOGGER.warn("Tried to register update check for non-existent modid: " + modid);
     		return;
     	}
-    	submitTask(mc.getName(), currentVersion != null ? currentVersion : mc.getVersion(), MODS_CATEGORY_ID, updateJSONUrl);
+    	submitTask(mc.getName(), currentVersion != null ? currentVersion : mc.getVersion(), MODS_CATEGORY_ID, updateJSONUrl, updateURL);
     }
     
-    public static void submitTask(String name, String currentVersion, String categoryID, String updateJSONUrl) {
+    public static void submitTask(String name, String currentVersion, String categoryID, String updateJSONUrl, String updateURL) {
     	if(!categories.containsKey(categoryID)) {
     		LOGGER.warn("Tried to register a non-existent category for mod " + name + ": " + categoryID);
     	}
-    	futures.add(CompletableFuture.supplyAsync(new UpdateCheckTask(name, currentVersion, categories.get(categoryID), updateJSONUrl), executor));
+    	futures.add(CompletableFuture.supplyAsync(new UpdateCheckTask(name, currentVersion, categories.get(categoryID), updateJSONUrl, updateURL), executor));
     }
     
     public static void registerCategory(String id, String version, String displayName) {

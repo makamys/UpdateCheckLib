@@ -25,12 +25,14 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 	String currentVersion;
 	UpdateCategory category;
 	String updateJSONUrl;
+	String updateUrl;
 	
-	public UpdateCheckTask(String name, String currentVersion, UpdateCategory category, String updateJSONUrl) {
+	public UpdateCheckTask(String name, String currentVersion, UpdateCategory category, String updateJSONUrl, String updateUrl) {
 		this.name = name;
 		this.currentVersion = currentVersion;
 		this.category = category;
 		this.updateJSONUrl = updateJSONUrl;
+		this.updateUrl = updateUrl;
 	}
 	
 	@Override
