@@ -28,6 +28,9 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 	String updateJSONUrl;
 	String updateUrl;
 	
+	public static final boolean TEST_MODE = Boolean.parseBoolean(System.getProperty("updateCheckLib.test", "false"));
+	private static final String MOCK_PREFIX = "mock://";
+	
 	public UpdateCheckTask(String name, String currentVersion, UpdateCategory category, String updateJSONUrl, String updateUrl) {
 		this.name = name;
 		this.currentVersion = new ComparableVersion(currentVersion);
@@ -57,6 +60,7 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
 	
 	private ComparableVersion solveVersion() throws Exception {
 		if(category == null) return null;
+		if(TEST_MODE && updateJSONUrl.startsWith(MOCK_PREFIX)) return mockSolveVersion();
 		
         URL url = new URL(updateJSONUrl);
         InputStream contents = url.openStream();
@@ -76,6 +80,10 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
         LOGGER.error("Update json " + updateJSONUrl + " contains no " + category.version + " element.");
         return null;
     }
+	
+	private ComparableVersion mockSolveVersion() {
+		return new ComparableVersion(updateJSONUrl.substring(MOCK_PREFIX.length()));
+	}
 	
 	public static class Result {
 		UpdateCheckTask task;
