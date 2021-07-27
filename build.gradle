@@ -59,6 +59,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
 
+jar {
+    sourceSets.main.java.exclude('makamys/updatechecklib/test/**')
+}
+
 processResources {
     // This will ensure that this task is redone when the versions change.
     inputs.property "version", version
