@@ -21,10 +21,10 @@ import static makamys.updatechecklib.UpdateCheckLib.LOGGER;
 
 class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
     	
-	private String name;
-	private String currentVersion;
-	private UpdateCategory category;
-	private String updateJSONUrl;
+	String name;
+	String currentVersion;
+	UpdateCategory category;
+	String updateJSONUrl;
 	
 	public UpdateCheckTask(String name, String currentVersion, UpdateCategory category, String updateJSONUrl) {
 		this.name = name;
@@ -49,7 +49,7 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
         
         LOGGER.debug("Update version found for " + name + ": " + solved + " (running " + current + ")");
 
-        return new UpdateCheckTask.Result(solved);
+        return new UpdateCheckTask.Result(this, solved);
     }
 	
 	private ComparableVersion solveVersion() throws Exception {
@@ -75,9 +75,11 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
     }
 	
 	public static class Result {
+		UpdateCheckTask task;
 		public ComparableVersion newVersion;
 		
-		public Result(ComparableVersion newVersion) {
+		public Result(UpdateCheckTask task, ComparableVersion newVersion) {
+			this.task = task;
 			this.newVersion = newVersion;
 		}
 	}

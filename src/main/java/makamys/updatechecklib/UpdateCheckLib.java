@@ -38,8 +38,8 @@ public class UpdateCheckLib
     private static List<CompletableFuture<UpdateCheckTask.Result>> futures = new ArrayList<>();
     
     public static String MODS_CATEGORY_ID = "mods";
-    private static UpdateCategory MODS = new UpdateCategory(MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
-    private static Map<String, UpdateCategory> categories = new HashMap<>();
+    static UpdateCategory MODS = new UpdateCategory(MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
+    static Map<String, UpdateCategory> categories = new HashMap<>();
     
     static {
     	categories.put("mods", MODS);
@@ -83,33 +83,43 @@ public class UpdateCheckLib
 					}
 				})
 				.collect(Collectors.toList());
-			
-				onFinished(results);
+				
+				for(UpdateCheckTask.Result result : results) {
+					result.task.category.results.add(result);
+				}
+				
+				onFinished();
 				if(event.getSide() == Side.CLIENT) {
-					onFinishedClient(results);
+					onFinishedClient();
 				}
 			}
 		});
     }
     
-    private void onFinished(List<UpdateCheckTask.Result> results) {
-    	new ResultHTMLRenderer(results).render(new File(Minecraft.getMinecraft().mcDataDir + "/updates.html"));
+    private void onFinished() {
+    	new ResultHTMLRenderer().render(new File(Minecraft.getMinecraft().mcDataDir + "/updates.html"));
     }
     
     @SideOnly(Side.CLIENT)
-    private void onFinishedClient(List<UpdateCheckTask.Result> results) {
+    private void onFinishedClient() {
     	
     }
     
-    static class UpdateCategory {
+    static class UpdateCategory implements Comparable<UpdateCategory> {
     	public String id;
     	public String displayName;
     	public String version;
+    	public List<UpdateCheckTask.Result> results = new ArrayList<>();
     	
     	public UpdateCategory(String id, String version, String displayName) {
     		this.id = id;
     		this.version = version;
     		this.displayName = displayName;
     	}
+
+		@Override
+		public int compareTo(UpdateCategory o) {
+			return this.id.equals(UpdateCheckLib.MODS_CATEGORY_ID) ? -1 : displayName.compareTo(o.displayName);
+		}
     }
 }
