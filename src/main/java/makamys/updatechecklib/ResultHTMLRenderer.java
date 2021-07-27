@@ -72,14 +72,16 @@ public class ResultHTMLRenderer {
 		for(UpdateCategory cat : UpdateCheckLib.categories.values().stream().sorted().collect(Collectors.toList())) {
 			List<UpdateCheckTask.Result> interestingResults = cat.results.stream().filter(r -> r.isInteresting()).collect(Collectors.toList());
 			
-			String tableTitle = cat.displayName;
-			String rows = "";
-			for(UpdateCheckTask.Result result : interestingResults) {
-				String newVersionStr = result.newVersion != null ? result.newVersion.toString() : "<b>ERROR</b>";
-				rows += String.format(TABLE_ROW_TEMPLATE, result.task.name, result.task.currentVersion, newVersionStr, result.task.updateUrl, result.task.updateUrl);
+			if(!interestingResults.isEmpty()) {
+				String tableTitle = cat.displayName;
+				String rows = "";
+				for(UpdateCheckTask.Result result : interestingResults) {
+					String newVersionStr = result.newVersion != null ? result.newVersion.toString() : "<b>ERROR</b>";
+					rows += String.format(TABLE_ROW_TEMPLATE, result.task.name, result.task.currentVersion, newVersionStr, result.task.updateUrl, result.task.updateUrl);
+				}
+				
+				tables += String.format(TABLE_TEMPLATE, String.format(TABLE_TITLE_TEMPLATE, tableTitle), FIELD_NAME, FIELD_CURRENT_VERSION, FIELD_NEW_VERSION, FIELD_URL, rows);
 			}
-			
-			tables += String.format(TABLE_TEMPLATE, String.format(TABLE_TITLE_TEMPLATE, tableTitle), FIELD_NAME, FIELD_CURRENT_VERSION, FIELD_NEW_VERSION, FIELD_URL, rows);
 		}
 		return tables;
 	}
