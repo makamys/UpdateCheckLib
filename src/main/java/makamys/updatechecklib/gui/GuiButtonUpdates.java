@@ -24,7 +24,7 @@ public class GuiButtonUpdates extends GuiButtonGeneric {
 	public List<String> getTooltipStrings() {
 		String plural = updateCount != 1 ? "s" : "";
 		return Arrays.asList(
-        		"" + EnumChatFormatting.GREEN + updateCount + EnumChatFormatting.RESET + " mod update" + plural + " available.",
+        		"" + EnumChatFormatting.GREEN + updateCount + EnumChatFormatting.RESET + " update" + plural + " available.",
         		"Click to open list in browser.",
         		EnumChatFormatting.GRAY + "(Shift click to copy URL.)");
 	}
