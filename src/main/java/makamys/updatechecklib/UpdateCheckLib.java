@@ -35,7 +35,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class UpdateCheckLib
 {
     public static final String MODID = "UpdateCheckLib";
-    public static final String VERSION = "0.0";
+    public static final String VERSION = "@VERSION@";
     
     public static final Logger LOGGER = LogManager.getLogger("updatechecklib");
 
