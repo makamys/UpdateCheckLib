@@ -46,8 +46,8 @@ public class UpdateCheckLib
     private static int updateCount = 0;
     private static final File updatesFile = new File(Launch.minecraftHome, "updates.html");
     
-    static UpdateCategory MODS = new UpdateCategory(UpdateCheckAPI.MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod");
-    static UpdateCategory RESOURCE_PACKS = new UpdateCategory(UpdateCheckAPI.RESOURCE_PACKS_CATEGORY_ID, Loader.MC_VERSION, "Resource pack");
+    static UpdateCategory MODS = new UpdateCategory(UpdateCheckAPI.MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod", false);
+    static UpdateCategory RESOURCE_PACKS = new UpdateCategory(UpdateCheckAPI.RESOURCE_PACKS_CATEGORY_ID, Loader.MC_VERSION, "Resource pack", false);
     static Map<String, UpdateCategory> categories = new HashMap<>();
     
     private static final int UPDATES_BUTTON_ID = 1615486202;
@@ -133,12 +133,14 @@ public class UpdateCheckLib
     	public String id;
     	public String displayName;
     	public String version;
+    	public boolean backwardsCompatible; 
     	public List<UpdateCheckTask.Result> results = new ArrayList<>();
     	
-    	public UpdateCategory(String id, String version, String displayName) {
+    	public UpdateCategory(String id, String version, String displayName, boolean backwardsCompatible) {
     		this.id = id;
     		this.version = version;
     		this.displayName = displayName;
+    		this.backwardsCompatible = backwardsCompatible;
     	}
 
 		@Override

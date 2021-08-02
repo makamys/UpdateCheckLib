@@ -47,12 +47,13 @@ public class UpdateCheckAPI {
     /** Register a category for your components. Use this if your component is something other than a mod or a resource pack.
      * @param id The unique identifier used to refer to this category. If a category is already defined with this ID, this method will not do anything.
      * @param version The version of the component's dependency. For a mod or resource pack, this will be the Minecraft version.
+     * @param backwardsCompatible Can the component run if our version of its dependency is higher than what it requires? For example, this is false for Forge mods (we can't run Forge mods made for a lower version of Minecraft!), but true for MAtmos soundpacks (packs made for lower versions of MAtmos will still work).
      * @param displayName The display name of the category that will be shown in the UI. Should be capitalized and singular.
      */
-    public static void registerCategory(String id, String version, String displayName) {
+    public static void registerCategory(String id, String version, String displayName, boolean backwardsCompatible) {
     	if(!isEnabled()) return;
     	if(!categories.containsKey(id)) {
-    		categories.put(id, new UpdateCategory(id, version, displayName));
+    		categories.put(id, new UpdateCategory(id, version, displayName, backwardsCompatible));
     	}
     }
 	

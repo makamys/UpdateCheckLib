@@ -33,15 +33,19 @@ public class UCLTest {
     	UpdateCheckAPI.submitTask("very new mod", "1.2", UpdateCheckAPI.MODS_CATEGORY_ID, "mock://1.0");
     	
     	// bad json url, non-mod test
-    	UpdateCheckAPI.registerCategory("resourcePacks", "1.1.1", "Resource pack");
+    	UpdateCheckAPI.registerCategory("resourcePacks", "1.1.1", "Resource pack", false);
     	UpdateCheckAPI.submitTask("bad res pack", "0.1", "resourcePacks", "bad json url");
     	
     	// category with no interesting elements
-    	UpdateCheckAPI.registerCategory("thingy", "1.1.1", "Thingy");
+    	UpdateCheckAPI.registerCategory("thingy", "1.1.1", "Thingy", false);
     	UpdateCheckAPI.submitTask("up to date thingy", "1.1", "thingy", "mock://1.1");
     	
     	// resource pack
     	UpdateCheckAPI.submitTask("a resource pack", "0.1", UpdateCheckAPI.RESOURCE_PACKS_CATEGORY_ID, "mock://1.0");
+    	
+    	// backwards compatible category
+    	UpdateCheckAPI.registerCategory("matmosSoundpacks", "9999", "MAtmos soundpack", true);
+    	UpdateCheckAPI.submitTask("some soundpack", "0.1", "matmosSoundpacks", "https://raw.githubusercontent.com/makamys/MAtmos/master/updatejson/update-mat_zen.json");
     }
     
 }
