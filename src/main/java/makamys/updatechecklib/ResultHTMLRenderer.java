@@ -3,9 +3,11 @@ package makamys.updatechecklib;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 
@@ -68,8 +70,9 @@ public class ResultHTMLRenderer {
 	}
 	
 	private String generateTables() {
-		String tables = "";
-		for(UpdateCategory cat : UpdateCheckLib.categories.values().stream().sorted().collect(Collectors.toList())) {
+		final StringBuffer tables = new StringBuffer();
+		
+		Stream.concat(Arrays.asList(UpdateCheckLib.MODS).stream(), UpdateCheckLib.categories.values().stream().sorted().filter(c -> c != UpdateCheckLib.MODS)).forEach(cat -> {
 			List<UpdateCheckTask.Result> interestingResults = cat.results.stream().filter(r -> r.isInteresting()).collect(Collectors.toList());
 			
 			if(!interestingResults.isEmpty()) {
@@ -80,10 +83,10 @@ public class ResultHTMLRenderer {
 					rows += String.format(TABLE_ROW_TEMPLATE, result.task.name, result.task.currentVersion, newVersionStr, result.task.homepage, result.task.homepage);
 				}
 				
-				tables += String.format(TABLE_TEMPLATE, String.format(TABLE_TITLE_TEMPLATE, tableTitle), FIELD_NAME, FIELD_CURRENT_VERSION, FIELD_NEW_VERSION, FIELD_URL, rows);
+				tables.append(String.format(TABLE_TEMPLATE, String.format(TABLE_TITLE_TEMPLATE, tableTitle), FIELD_NAME, FIELD_CURRENT_VERSION, FIELD_NEW_VERSION, FIELD_URL, rows));
 			}
-		}
-		return tables;
+		});
+		return tables.toString();
 	}
 	
 }
