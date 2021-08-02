@@ -2,7 +2,11 @@ package makamys.updatechecklib;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
@@ -76,17 +80,31 @@ class UpdateCheckTask implements Supplier<UpdateCheckTask.Result> {
         }
         
         String channel = ConfigUCL.promoChannel;
-        String promoKey = category.version + "-" + channel;
+        
+        ComparableVersion categoryVersion = new ComparableVersion(category.version);
         
         JsonElement promos = jason.get("promos");
         if(promos instanceof JsonObject) {
-        	JsonElement promoVersion = ((JsonObject)promos).get(promoKey);
-        	
-        	if(promoVersion != null) {
-        		return new ComparableVersion(promoVersion.getAsString());
+        	try {
+	        	ComparableVersion newestLowerCategoryVersion = Collections.max(((JsonObject)promos).entrySet().stream().map(e -> new ComparableVersion(e.getKey().split("-")[0])).filter(v -> v.compareTo(categoryVersion) <= 0).collect(Collectors.toList()));
+	        	if(newestLowerCategoryVersion.compareTo(categoryVersion) == 0 || category.backwardsCompatible) {
+	        		String promoKey = newestLowerCategoryVersion + "-" + channel;
+	        		JsonElement promoVersion = ((JsonObject)promos).get(promoKey);
+		        	
+		        	if(promoVersion != null) {
+		        		return new ComparableVersion(promoVersion.getAsString());
+		        	} else {
+		        		LOGGER.log(getErrorLevel(), "No promo named " + promoKey + " found in " + updateJSONUrl);
+		        	}
+	        	} else {
+	        		LOGGER.log(getErrorLevel(), "No promo found for non-backwards compatible category of version " + categoryVersion + " in " + updateJSONUrl);
+	        	}
+        	} catch(NoSuchElementException e) {
+        		LOGGER.log(getErrorLevel(), "No promo found for category version lower than " + category.version + " in " + updateJSONUrl);
         	}
+        } else {
+        	LOGGER.log(getErrorLevel(), "Failed to locate promos in " + updateJSONUrl);
         }
-        LOGGER.log(getErrorLevel(), "Failed to locate promos -> " + promoKey + " in " + updateJSONUrl);
         return null;
     }
 	
