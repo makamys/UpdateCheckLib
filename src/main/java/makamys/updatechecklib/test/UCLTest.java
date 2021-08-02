@@ -32,6 +32,9 @@ public class UCLTest {
     	// very new mod mock
     	UpdateCheckAPI.submitTask("very new mod", "1.2", UpdateCheckAPI.MODS_CATEGORY_ID, "mock://1.0");
     	
+    	// mod with weird version
+    	UpdateCheckAPI.submitTask("weird mod", "@VERSION@", UpdateCheckAPI.MODS_CATEGORY_ID, "mock://1.0");
+    	
     	// bad json url, non-mod test
     	UpdateCheckAPI.registerCategory("resourcePacks", "1.1.1", "Resource pack", false);
     	UpdateCheckAPI.submitTask("bad res pack", "0.1", "resourcePacks", "bad json url");
