@@ -1,3 +1,5 @@
-jar {
-    sourceSets.main.java.exclude('makamys/updatechecklib/test/**')
+if(!project.enable_test.toBoolean()){
+	jar {
+		sourceSets.main.java.exclude('makamys/updatechecklib/test/**')
+	}
 }
