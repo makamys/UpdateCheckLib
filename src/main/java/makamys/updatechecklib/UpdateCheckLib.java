@@ -125,6 +125,7 @@ public class UpdateCheckLib
     }
     
     private void onFinished() {
+    	LOGGER.info("Found " + updateCount + " updates.");
     	new ResultHTMLRenderer().render(updatesFile);
     }
     
