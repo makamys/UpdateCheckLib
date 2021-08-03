@@ -42,7 +42,7 @@ public class UpdateCheckLib
     private static BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
     static ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, workQueue);
     static List<CompletableFuture<UpdateCheckTask.Result>> futures = new ArrayList<>();
-    private static int updateCount = 0;
+    private static int updateCount = -1;
     private static final File updatesFile = new File(Launch.minecraftHome, "updates.html");
     
     static UpdateCategory MODS = new UpdateCategory(UpdateCheckAPI.MODS_CATEGORY_ID, Loader.MC_VERSION, "Mod", false);
@@ -50,6 +50,9 @@ public class UpdateCheckLib
     static Map<String, UpdateCategory> categories = new HashMap<>();
     
     private static final int UPDATES_BUTTON_ID = 1615486202;
+    
+    @SideOnly(Side.CLIENT)
+    GuiButtonUpdates updatesButton;
     
     static {
     	categories.put(UpdateCheckAPI.MODS_CATEGORY_ID, MODS);
@@ -71,7 +74,7 @@ public class UpdateCheckLib
     public void onGui(InitGuiEvent.Post event) {
     	if(event.gui instanceof GuiMainMenu) {
     		ConfigUCL.reload();
-    		if(ConfigUCL.showUpdatesButton && updateCount > 0) {
+    		if(ConfigUCL.showUpdatesButton) {
     			String url = null;
     			try {
 					url = updatesFile.toURI().toURL().toString();
@@ -81,9 +84,11 @@ public class UpdateCheckLib
 				}
     			int buttonX = ConfigUCL.updatesButtonX + (ConfigUCL.updatesButtonAbsolutePos ? 0 : event.gui.width / 2);
     			int buttonY = ConfigUCL.updatesButtonY + (ConfigUCL.updatesButtonAbsolutePos ? 0 : event.gui.height / 4);
-	    		GuiButton button = new GuiButtonUpdates(UPDATES_BUTTON_ID, buttonX, buttonY, 20, 20, updateCount, url);
-	    		event.buttonList.add(button);
+	    		updatesButton = new GuiButtonUpdates(UPDATES_BUTTON_ID, buttonX, buttonY, 20, 20, updateCount, url);
+	    		event.buttonList.add(updatesButton);
     		}
+    	} else {
+    		updatesButton = null;
     	}
     }
     
@@ -125,7 +130,9 @@ public class UpdateCheckLib
     
     @SideOnly(Side.CLIENT)
     private void onFinishedClient() {
-    	
+    	if(updatesButton != null) {
+    		updatesButton.setUpdateCount(updateCount);
+    	}
     }
     
     static class UpdateCategory implements Comparable<UpdateCategory> {

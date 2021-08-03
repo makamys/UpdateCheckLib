@@ -36,7 +36,7 @@ public class GuiButtonGeneric extends GuiButton {
     public void drawButton(Minecraft p_146112_1_, int mouseX, int mouseY) {
     	super.drawButton(p_146112_1_, mouseX, mouseY);
     	
-    	boolean inWindow = this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+    	boolean inWindow = this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
     	
     	if(inWindow) {
     		List<String> tooltipStrings = getTooltipStrings();
