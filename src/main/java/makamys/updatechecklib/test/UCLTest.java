@@ -35,16 +35,12 @@ public class UCLTest {
     	// mod with weird version
     	UpdateCheckAPI.submitTask("weird mod", "@VERSION@", UpdateCheckAPI.MODS_CATEGORY_ID, "mock://1.0");
     	
-    	// bad json url, non-mod test
-    	UpdateCheckAPI.registerCategory("resourcePacks", "1.1.1", "Resource pack", false);
-    	UpdateCheckAPI.submitTask("bad res pack", "0.1", "resourcePacks", "bad json url");
+    	// bad json url, resource pack test
+    	UpdateCheckAPI.submitTask("bad res pack", "0.1", UpdateCheckAPI.RESOURCE_PACKS_CATEGORY_ID, "bad json url");
     	
-    	// category with no interesting elements
+    	// custom category with no interesting elements
     	UpdateCheckAPI.registerCategory("thingy", "1.1.1", "Thingy", false);
     	UpdateCheckAPI.submitTask("up to date thingy", "1.1", "thingy", "mock://1.1");
-    	
-    	// resource pack
-    	UpdateCheckAPI.submitTask("a resource pack", "0.1", UpdateCheckAPI.RESOURCE_PACKS_CATEGORY_ID, "mock://1.0");
     	
     	// backwards compatible category
     	UpdateCheckAPI.registerCategory("matmosSoundpacks", "9999", "MAtmos soundpack", true);
