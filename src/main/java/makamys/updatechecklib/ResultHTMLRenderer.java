@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 
+import makamys.updatechecklib.UpdateCheckLib.UpdateCategory;
+
 import static makamys.updatechecklib.UpdateCheckLib.LOGGER;
 
 public class ResultHTMLRenderer {
@@ -69,7 +71,9 @@ public class ResultHTMLRenderer {
 	private String generateTables() {
 		final StringBuffer tables = new StringBuffer();
 		
-		Stream.concat(Arrays.asList(UpdateCheckLib.MODS).stream(), UpdateCheckLib.categories.values().stream().sorted().filter(c -> c != UpdateCheckLib.MODS)).forEach(cat -> {
+		List<UpdateCategory> first = Arrays.asList(UpdateCheckLib.MODS, UpdateCheckLib.RESOURCE_PACKS); 
+		
+		Stream.concat(first.stream(), UpdateCheckLib.categories.values().stream().sorted().filter(c -> !first.contains(c))).forEach(cat -> {
 			List<UpdateCheckTask.Result> interestingResults = cat.results.stream().filter(r -> r.isInteresting()).collect(Collectors.toList());
 			
 			if(!interestingResults.isEmpty()) {
