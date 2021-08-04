@@ -1,4 +1,4 @@
-if(!project.enable_test.toBoolean()){
+if(!project.findProperty("enable_test")?.toBoolean()){
 	jar {
 		sourceSets.main.java.exclude('makamys/updatechecklib/test/**')
 	}
