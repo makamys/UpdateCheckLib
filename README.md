@@ -23,7 +23,7 @@ dependencies {
 }
 ```
 
-You also need to get the library to the users' mods folder in some way when releasing. You can tell them to download it manually from the project's [releases tab](https://github.com/makamys/UpdateCheckLib/releases), use [CodeChickenCore](https://github.com/Chicken-Bones/CodeChickenLib/tree/1.7)'s DepLoader, or [MCLib](https://github.com/makamys/MCLib)'s SloppyDepLoader.
+You also need to get the library to the users' mods folder in some way when releasing. You can tell them to download it manually from the project's [releases tab](https://github.com/makamys/UpdateCheckLib/releases), or use [CodeChickenCore](https://github.com/Chicken-Bones/CodeChickenLib/tree/1.7)'s DepLoader or [MCLib](https://github.com/makamys/MCLib)'s SloppyDepLoader to download it automatically.
 
 > I use the latter option in my projects. In addition, MCLib has a helper class for easily adding update tasks to mods. See [this commit](https://github.com/makamys/Satchels/commit/965478ca91f6d7eb9c87981ffde23e40397ba172) for example.
 
