@@ -3,3 +3,12 @@ if(!project.findProperty("enable_test")?.toBoolean()){
 		sourceSets.main.java.exclude('makamys/updatechecklib/test/**')
 	}
 }
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+	
+artifacts {
+	archives javadocJar
+}

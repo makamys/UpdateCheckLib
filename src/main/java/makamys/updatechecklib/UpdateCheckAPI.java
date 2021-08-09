@@ -15,7 +15,7 @@ public class UpdateCheckAPI {
 	
 	/** Convenience method for submitting a Forge mod update check task. The version will be retrieved from the mod's @Mod annotation.
 	 * 
-	 * @see {@link #submitTask} */
+	 * @see #submitTask */
 	public static void submitModTask(String modid, String updateJSONUrl) {
     	if(!isEnabled()) return;
     	submitModTask(modid, null, updateJSONUrl);
@@ -23,7 +23,7 @@ public class UpdateCheckAPI {
     
 	/** Convenience method for submitting a Forge mod update check task. Use this if you want to use a different version from the one in the mod's @Mod annotation.
 	 * 
-	 * @see {@link #submitTask} */
+	 * @see #submitTask */
     public static void submitModTask(String modid, String currentVersion, String updateJSONUrl) {
     	if(!isEnabled()) return;
     	ModContainer mc = Loader.instance().getIndexedModList().get(modid);
