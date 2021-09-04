@@ -1,3 +1,7 @@
+**This project has been merged into [MCLib](https://github.com/makamys/MCLib) and is no longer maintained. The information below is provided for historical purposes only.**
+
+---
+
 # UpdateCheckLib
 
 This is a library Minecraft mods can use to check for updates. When there are mods with updates available, a button will appear in the main menu.
